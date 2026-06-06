@@ -10,8 +10,7 @@ jobs:
     name: Deploying everything to the staging cluster
     steps:
       - run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ssh_key
-          ssh -i ~/ssh_key ubuntu@${{ secrets.SSH_HOST_IP }}
+          ssh -i {{ secrets.SSH_PRIVATE_KEY }} ubuntu@${{ secrets.SSH_HOST_IP }}
           cd ~/test-deployment-monorepo && git pull
           pnpm install && pnpm run build
           pm2 restart http-ws-fe
