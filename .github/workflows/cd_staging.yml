@@ -9,8 +9,15 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploying everything to the staging cluster
     steps:
-      - run: |
-          ssh -i {{ secrets.SSH_PRIVATE_KEY }} ubuntu@${{ secrets.SSH_HOST_IP }}
-          cd ~/test-deployment-monorepo && git pull
-          pnpm install && pnpm run build
-          pm2 restart http-ws-fe
+      - name: Execute remote ssh commands
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST_IP }}
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/test-deployment-monorepo
+            git pull
+            pnpm install
+            pnpm run build
+            pm2 restart http-ws-fe
